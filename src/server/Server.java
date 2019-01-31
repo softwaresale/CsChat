@@ -25,14 +25,15 @@ public class Server {
 		outqueue = new ArrayBlockingQueue<Message>(15);
 		// Map of connections with Sockets
 		connections = new HashMap<User, Socket>();
+		
+		// Create monitors
+		OutQueueMonitor outQueueMonitor = new OutQueueMonitor(outqueue, connections);
 	}
-
-	public ArrayList<Socket> getAddressedSockets(Message msg) {
-		ArrayList<Socket> socks = new ArrayList<Socket>();
-		for (Entry<User, Socket> conn : connections.entrySet()) {
-			if (msg.getAddressees().contains(conn.getKey()))
-				socks.add(conn.getValue());
-		}
-		return socks;
+	
+	public void start() {
+		// Execute outqueue monitor
+		
+		// Execute inqueue monitor
 	}
+	
 }

@@ -1,31 +1,44 @@
 package server;
 
 import java.util.ArrayList;
-import java.util.concurrent.Callable;
 import java.net.Socket;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 
-public class MessageDispatcher implements Callable<Integer> {
+public class MessageDispatcher implements Runnable {
 
-	// Message to send
-	private Message message;
-	private ArrayList<Socket> recipients;
+	private Message msg;
+	private ArrayList<Socket> connections;
+	private Integer sentCount;
+	private boolean shouldCancel = false;
 	
-	public MessageDispatcher(Message msg, ArrayList<Socket> socks) {
-		this.message = msg;
-		this.recipients = socks;
+	public MessageDispatcher(Message msg, ArrayList<Socket> conns) {
+		this.msg = msg;
+		this.connections = conns;
+		sentCount = 0;
 	}
 
 	@Override
-	public Integer call() throws IOException {
-		int sent = 0;
-		for (Socket sock : recipients) {
-			ObjectOutputStream ostream = new ObjectOutputStream(sock.getOutputStream());
-			ostream.writeObject(message);
-			sent++;
+	public void run() {
+		for (Socket sock : connections) {
+			if (shouldCancel) {
+				return;
+			}
+			ObjectOutputStream ostream = null;
+			try {
+				ostream = new ObjectOutputStream(sock.getOutputStream());
+				ostream.writeObject(msg);
+			} catch (IOException e) {	
+				//e.printStackTrace();
+			} finally {
+				sentCount++;
+				try {
+					ostream.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 		}
-		return sent;
 	}
-
 }
