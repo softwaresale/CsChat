@@ -3,6 +3,16 @@ package server;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+/** Models a message
+ * 
+ * All transmissons sent are through Messages. Peer to
+ * peer messages as well as server-specfic commands are
+ * sent via messages. Each message has a payload, sender,
+ * and addressees. THe payload is whatever data is being
+ * sent. The Sender is a user that is composing the message.
+ * The addressees are users that will recieve the message.
+ * @author charlie
+ */
 public class Message implements Serializable {
 
 	/** Describes the actual data being sent
@@ -22,6 +32,9 @@ public class Message implements Serializable {
 	 */
 	private ArrayList<User> addressees;
 	
+	/** Creates an empty message
+	 * This has blank information and is sent to nobody.
+	 */
 	public Message() {
 		payload = "";
 		sender = null;

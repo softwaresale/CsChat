@@ -9,6 +9,14 @@ import java.util.HashMap;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
+/** Listends for incoming clients
+ * 
+ * This class listens for incoming clients and adds them
+ * to the server. As each is added, a new entry is added
+ * in the connections table in the Server class and a new
+ * message listener is added to the message listener pool.
+ * @author charlie
+ */
 public class ClientListener implements Runnable {
 
 	private ServerSocket serv;
@@ -16,6 +24,16 @@ public class ClientListener implements Runnable {
 	private HashMap<User, Socket> connections;
 	private ArrayBlockingQueue<Message> msgqueue;
 	
+	/** Creates a new client listener.
+	 * 
+	 * This constructor should not be used outside of the server.
+	 *  
+	 * @param serv Socket server to accept clients from
+	 * @param outgoingListeners Queue taking socket listeners to thread pool
+	 * @param connections Map of server connections
+	 * @param msgqueue Server message queue (messages to be sent out)
+	 * @throws ServerException
+	 */
 	public ClientListener(ServerSocket serv, 
 			BlockingQueue<Runnable> outgoingListeners, 
 			HashMap<User, Socket> connections,
@@ -49,7 +67,17 @@ public class ClientListener implements Runnable {
 		}
 	}
 
-	public User readUserFromSocket(Socket sock) throws IOException, ClassNotFoundException {
+	/** Reads a user from the first transmission over a connection
+	 * 
+	 * This method is called when a socket is first accepted. The first message
+	 * sent over the socket is the user info.
+	 * 
+	 * @param sock Socket to read from
+	 * @return
+	 * @throws IOException
+	 * @throws ClassNotFoundException
+	 */
+	private User readUserFromSocket(Socket sock) throws IOException, ClassNotFoundException {
 		User user = null;
 		ObjectInputStream istream = new ObjectInputStream(sock.getInputStream());
 		user = (User) istream.readObject();

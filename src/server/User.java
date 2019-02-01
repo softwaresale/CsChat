@@ -4,6 +4,12 @@ import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
+/** Models a User
+ * Each client has a user. The user contains personal info
+ * as well as addressing information.
+ * 
+ * @author charlie
+ */
 public class User implements Serializable {
 
 	private String username = null;
