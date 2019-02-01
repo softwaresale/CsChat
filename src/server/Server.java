@@ -1,7 +1,9 @@
 package server;
 
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.IOException;
@@ -11,6 +13,7 @@ import java.util.Map.Entry;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
+import middleware.MetadataAdder;
 
 /** The actual server class
  * 
@@ -28,6 +31,7 @@ public class Server {
 	private Thread listenerThread;
 	private ThreadPoolExecutor messageListener;
 	private BlockingQueue<Runnable> incomingSocketListeners;
+	private OutQueueMonitor outqueueMonitor;
 	
 	/** Sets up all server threads and data structures.
 	 * 
@@ -52,7 +56,11 @@ public class Server {
 		messageListener = new ThreadPoolExecutor(15, 25, 100, null, incomingSocketListeners);
 		
 		// Create monitors
-		outThread = new Thread(new OutQueueMonitor(msgqueue, connections));
+		outqueueMonitor = new OutQueueMonitor(msgqueue, connections);
+		outThread = new Thread(outqueueMonitor);
+		
+		// Add middleware
+		outqueueMonitor.addMiddleware(this.newMetadataAdder());
 	}
 	
 	/** Starts the server
@@ -77,5 +85,15 @@ public class Server {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	public MetadataAdder newMetadataAdder() {
+		try {
+			return new MetadataAdder(connections, InetAddress.getLocalHost());
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 }

@@ -1,6 +1,7 @@
 package server;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.net.Socket;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -20,6 +21,7 @@ public class MessageDispatcher implements Runnable {
 	private Integer sentCount;
 	private boolean shouldCancel = false;
 	
+	
 	/** Creates a new dispatcher
 	 * @param msg Message to be sent
 	 * @param conns List of sockets associated with each addressee
@@ -29,7 +31,7 @@ public class MessageDispatcher implements Runnable {
 		this.connections = conns;
 		sentCount = 0;
 	}
-
+	
 	@Override
 	public void run() {
 		for (Socket sock : connections) {

@@ -2,6 +2,7 @@ package server;
 
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -23,6 +24,7 @@ public class OutQueueMonitor implements Runnable {
 	private boolean keepGoing;
 	private ThreadPoolExecutor threadPool;
 	private BlockingQueue<Runnable> dispatchQueue;
+	private MiddlewareStack middleware;
 	
 	private OutQueueMonitor() {
 	}
@@ -37,8 +39,25 @@ public class OutQueueMonitor implements Runnable {
 		keepGoing = true;
 		this.dispatchQueue = new ArrayBlockingQueue<Runnable>(15);
 		this.threadPool = new ThreadPoolExecutor(10, 15, 100, null, this.dispatchQueue);
+		this.middleware = new MiddlewareStack();
 	}
-
+	
+	public void addMiddleware(AbstractMiddleware mid) {
+		this.middleware.add(mid);
+	}
+	
+	public void addMiddleware(Collection<? extends AbstractMiddleware> mid) {
+		this.middleware.addAll(mid);
+	}
+	
+	public void removeMiddleware(AbstractMiddleware mid) {
+		this.middleware.remove(mid);
+	}
+	
+	public void removeMiddleware(Collection<? extends AbstractMiddleware> mid) {
+		this.middleware.removeAll(mid);
+	}
+	
 	@Override
 	public void run() {
 		while (keepGoing) {

@@ -32,6 +32,8 @@ public class Message implements Serializable {
 	 */
 	private ArrayList<User> addressees;
 	
+	private ServerMetadata metadata;
+	
 	/** Creates an empty message
 	 * This has blank information and is sent to nobody.
 	 */
@@ -84,5 +86,13 @@ public class Message implements Serializable {
 
 	public void setAddressees(ArrayList<User> addressees) {
 		this.addressees = addressees;
+	}
+
+	public ServerMetadata getMetadata() {
+		return metadata;
+	}
+
+	public void setMetadata(ServerMetadata metadata) {
+		this.metadata = metadata;
 	}
 }
