@@ -24,6 +24,7 @@ public class MessageDispatcher implements Runnable {
 			if (shouldCancel) {
 				return;
 			}
+			
 			ObjectOutputStream ostream = null;
 			try {
 				ostream = new ObjectOutputStream(sock.getOutputStream());
